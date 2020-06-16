@@ -105,4 +105,43 @@ Describe 'PSToolbox' {
 
         }
     }
+
+    Context -Name 'Set-WindowTitle' -Tag 'SetWindowTitle' {
+        BeforeAll {
+            $currentTitle = $Host.UI.RawUI.WindowTitle
+            $newTitle = 'NewWindowTitle'
+        }
+
+        It 'Can update the Window title' {
+            { Set-WindowTitle -Title $currentTitle } | Should -Not -Throw
+
+            Set-WindowTitle -Title $newTitle
+            $Host.UI.RawUI.WindowTitle | Should -BeExactly $newTitle
+        }
+    }
+
+    Context -Name 'Test-IsAdmin' -Tag 'TestIsAdmin' {
+        It 'Can validate if the process is running elevated' {
+            { Test-IsAdmin } | Should -Not -Throw
+            Test-IsAdmin | Should -BeFalse
+        } 
+    }
+
+    Context -Name 'Get-RandomString' -Tag 'GetRandomString' {
+        It 'Can return a random string with the given parameters' {
+            { Get-RandomString } | Should -Not -Throw
+            
+            (Get-RandomString).Length | Should -Be 15
+            (Get-RandomString -Length 22 ).Length | Should -Be 22
+
+            Get-RandomString -Numbers | Should -Match '^[0-9]*$'
+            Get-RandomString -LowercaseLetters | Should -Match '^[a-z]*$'
+            Get-RandomString -UppercaseLetters | Should -Match '^[A-Z]*$'
+            Get-RandomString -Symbols | Should -Match '^(\W)*(_)*(\W)*$'
+            Get-RandomString -Space | Should -Match '^\s*$'
+
+            Get-RandomString -Length 25 -Numbers -Space -LowercaseLetters -UppercaseLetters -Symbols | 
+            Should -Match '^([0-9]*)([a-z]*)_*([A-Z])*((\W)*(_)*(\W))\s*(_)*$'
+        }
+    }
 }
