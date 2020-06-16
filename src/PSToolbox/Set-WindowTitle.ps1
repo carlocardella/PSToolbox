@@ -1,5 +1,5 @@
 ﻿function Set-WindowTitle {
-    <#
+	<#
 	.SYNOPSIS
 	Sets a custom title Powershell console window
 
