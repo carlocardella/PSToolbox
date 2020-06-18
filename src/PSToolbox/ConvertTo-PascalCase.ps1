@@ -1,25 +1,22 @@
 ﻿function ConvertTo-PascalCase {
     <#
     .SYNOPSIS
-        Converts the given string to PascalCasing
+    Converts the given string to PascalCasing
 
-        NOTE: Pascal Casing is applied only it works are separated by spaces, otherwise
-            the function cannot determine where to apply uppercases if the passed string is
-            a single word, even if composite
+    NOTE: Pascal Casing is applied only it works are separated by spaces, otherwise the function cannot determine where to apply uppercases if the passed string is a single word, even if composite
 
     .EXAMPLE
-        ConvertTo-PascalCase -String "conTerT tHIS TO PAScal casING"
+    ConvertTo-PascalCase -String "conTerT tHIS TO PAScal casING"
 
-        Contert This To Pascal Casing
+    Contert This To Pascal Casing
 
     .EXAMPLE
-        ConvertTo-PascalCase 'conVerT tHIs to paSCAL CaSe'
+    ConvertTo-PascalCase 'conVerT tHIs to paSCAL CaSe'
 
-        Convert This To Pascal Case
-
+    Convert This To Pascal Case
     #>
     param(
-        [parameter(mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, position = 1)]
+        [parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [Alias('Value', 'Input')]
         [string]$String,

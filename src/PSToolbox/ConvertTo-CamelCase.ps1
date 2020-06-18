@@ -1,24 +1,22 @@
 ﻿function ConvertTo-CamelCase {
     <#
     .SYNOPSIS
-        Converts the given string to camelCasing
+    Converts the given string to camelCasing
 
-        NOTE: camel casing is applied only it works are separated by spaces, otherwise
-            the function cannot determine where to apply uppercases if the passed string is
-            a single word, even if composite
+    NOTE: camel casing is applied only if works are separated by spaces, otherwise the function cannot determine where to apply uppercases if the passed string is a single word, even if composite
 
     .EXAMPLE
-        ConvertTo-CamelCase -String "conTerT tHIS TO CAMel casING"
+    ConvertTo-CamelCase -String "conTerT tHIS TO CAMel casING"
 
-        contert This To Camel Casing
+    contert This To Camel Casing
 
     .EXAMPLE
-        ConvertTo-CamelCase 'conVerT tHIs to caMEl CaSe'
+    ConvertTo-CamelCase 'conVerT tHIs to caMEl CaSe'
 
-        convert This To Camel Case
+    convert This To Camel Case
     #>
     param(
-        [parameter(mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, position = 1)]
+        [parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [Alias('Value', 'Input')]
         [string]$String,
