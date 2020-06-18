@@ -222,4 +222,17 @@ Describe 'PSToolbox' {
             (Get-Command -Module 'PSToolbox' -CommandType 'Alias').ResolvedCommand | Should -BeExactly 'Select-String'
         }
     }
+
+    Context -Name 'Get-NumberFromString' -Tag 'GetNumberFromString' {
+        { Get-NumberFromString -String 'sd679jsds8' } | Should -Not -Throw
+        { Get-NumberFromString -String 'hssdfsfs' } | Should -Not -Throw
+        { Get-NumberFromString -String '23423423423' } | Should -Not -Throw
+        { Get-NumberFromString -String '!#%gr.' } | Should -Not -Throw
+        { Get-NumberFromString -String '' } | Should -Throw "Cannot bind argument to parameter 'String' because it is an empty string."
+
+        Get-NumberFromString 'test123' | Should -BeExactly 123
+        Get-NumberFromString 'test' | Should -BeNullOrEmpty
+        Get-NumberFromString 'tesDt1.%^23' | Should -BeExactly 123
+        Get-NumberFromString '123' | Should -BeExactly 123
+    }
 }
