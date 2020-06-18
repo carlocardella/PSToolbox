@@ -69,10 +69,7 @@ PowerShellVersion = '5.1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Convert-CertBase64DataToFile', 'Convert-CertificateToBase64String', 
-               'Format-Xml', 'Get-RandomString', 'Invoke-SqlQuery', 'Set-SqlQuery', 
-               'Set-WindowTitle', 'Test-Guid', 'Test-IsAdmin', 'Test-IsHexadecimal', 
-               'Test-Json', 'Unprotect-SecureString', 'Update-StringInFile'
+FunctionsToExport = "*"
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
