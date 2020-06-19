@@ -123,14 +123,14 @@ Describe 'PSToolbox' {
     Context -Name 'Test-IsAdmin' -Tag 'TestIsAdmin' {
         It 'Can validate if the process is running elevated' {
             { Test-IsAdmin } | Should -Not -Throw
-            Test-IsAdmin | Should -BeFalse
-        } 
+            Test-IsAdmin | Should -BeTrue
+        }
     }
 
     Context -Name 'Get-RandomString' -Tag 'GetRandomString' {
         It 'Can return a random string with the given parameters' {
             { Get-RandomString } | Should -Not -Throw
-            
+
             (Get-RandomString).Length | Should -Be 15
             (Get-RandomString -Length 22 ).Length | Should -Be 22
 
