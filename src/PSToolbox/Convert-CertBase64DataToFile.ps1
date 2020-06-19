@@ -19,16 +19,16 @@
     #>
 
     param(
-        [parameter(Mandatory, Position = 1, ValueFromPipeline)]
+        [parameter(Mandatory, Position = 0, ValueFromPipeline)]
         ## Base64String representation of the certificate object
         [Alias('Data')]
         [string]$CertBase64Data,
 
-        [parameter(Position = 2)]
+        [parameter(Position = 1)]
         ## Full file path where to save the converted certificate
         [string]$OutputFile,
 
-        [parameter(Position = 3)]
+        [parameter(Position = 2)]
         ## password to use to save a Private Key file
         [securestring]$Password
     )
