@@ -17,6 +17,12 @@ Install the latest `Az` module:
 
 ## Installation
 
+### Powershell Gallery
+
+```powershell
+Install-Module -Name 'PSToolbox' -AllowPrerelease -Scope 'CurrentUser'
+```
+
 ### Windows
 
 Download the zip file or cloune the repo locally: copy the PSToolbox folder under
