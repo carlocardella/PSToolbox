@@ -154,4 +154,11 @@ Describe 'PSToolbox' {
         Get-NumberFromString 'tesDt1.%^23' | Should -BeExactly 123
         Get-NumberFromString '123' | Should -BeExactly 123
     }
+
+    Context -Name 'grep' -Tag 'grep' {
+        It 'Uses the "grep" alias property' {
+            { 'asdfg' | grep 'a' } | Should -Not -Throw
+            (Get-Command -Module 'PSToolbox' -CommandType 'Alias').ResolvedCommand | Should -BeExactly 'Select-String'
+        }
+    }
 }
