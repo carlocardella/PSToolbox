@@ -1,20 +1,36 @@
 function Remove-DuplicateModule {
-    $groups = gmo -ListAvailable | ? Path -Like "$env:USERPROFILE*" | group Name | ? Count -gt 1
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    param (
+        [parameter(Position = 0)]
+        [ValidateScript( { Test-Path $_ })]
+        [string]$ModuleFolder
+    )
 
+    if (! [string]::IsNullOrWhiteSpace($ModuleFolder)) {
+        $groups = Get-Module -ListAvailable | Where-Object Path -EQ $ModuleFolder | Group-Object 'Name' | Where-Object Count -gt 1
+    }
+    else {
+        $groups = Get-Module -ListAvailable | Where-Object Path -Like "$env:USERPROFILE*" | Group-Object 'Name' | Where-Object Count -gt 1
+    }
+    
     foreach ($group in $groups) {
         $versions = $null
-        $versions = $group.Group | sort 'Version' | select -SkipLast 1
+        $versions = $group.Group | Sort-Object 'Version' | Select-Object -SkipLast 1
         $versionToKeep = $null
-        $versionToKeep = $group.Group | sort 'Version' | select -Last 1
+        $versionToKeep = $group.Group | Sort-Object 'Version' | Select-Object -Last 1
 
-        Write-Host -ForegroundColor Green "$($versionToKeep.Name), $($versionToKeep.Version)"
+        Write-Verbose "$($versionToKeep.Name), $($versionToKeep.Version)"
     
         foreach ($version in $versions) {
-            Write-Host -ForegroundColor Yellow "$($version.Name), $($version.Version)"
+            Write-Verbose "$($version.Name), $($version.Version)"
 
             $moduleFolder = $null
             $moduleFolder = Split-Path $version.Path -Parent
-            del $moduleFolder -Force -Recurse
+            if ($Force -or ($PSCmdlet.ShouldProcess("$moduleFolder", "Remove module"))) {
+                if ($Force -or ($PSCmdlet.ShouldContinue("Remove module?", "$moduleFolder"))) {
+                    Remove-Item -Path $moduleFolder -Force -Recurse
+                }
+            }
         }
     }
 }
