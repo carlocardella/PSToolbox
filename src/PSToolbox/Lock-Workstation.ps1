@@ -1,5 +1,13 @@
-Function Lock-WorkStation 
-{
+Function Lock-Computer {
+    <#
+    .SYNOPSIS
+    Locks the current computer (Windows only)
+    
+    .EXAMPLE
+    Lock-Computer
+    #>
+    if (! $IsWindows) { throw [System.Exception]::new("This function is supported only on Windows") }
+
     $signature = @"
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool LockWorkStation();
