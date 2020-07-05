@@ -40,7 +40,7 @@ function Remove-DuplicateModule {
         [...]
 
     Removing all those outdated modules can be tedious and time consuming, this function automates the task.
-    By default the function uses 'Get-Module -ListAvailable' to retrieve the list of modules available in $env:PSModulePath, but you can specify a list of folders to scan instead of searching all available locations. 
+    By default the function uses 'Get-Module -ListAvailable' to retrieve the list of modules available in $env:PSModulePath, but you can specify a list of folders to scan instead of searching all available locations.
 
     .PARAMETER Folder
     Full path to the folder(s) you want to scan for duplicate modules
@@ -104,16 +104,23 @@ function Remove-DuplicateModule {
         $versionToKeep = $group.Group | Sort-Object 'Version' | Select-Object -Last 1
 
         foreach ($version in $versions) {
-            Write-Verbose "$($version.Name), $($version.Version)"
+            # this is needed because a module in a subfolder could have been already deleted after its parent
+            if (Test-Path -Path $version.Path) {
+                Write-Verbose "$($version.Name), $($version.Version)"
 
-            $moduleFolder = $null
-            $moduleFolder = Split-Path $version.Path -Parent
-            if ($Force -or ($PSCmdlet.ShouldProcess("$moduleFolder", "Remove module"))) {
-                if ($Force -or ($PSCmdlet.ShouldContinue("Remove module?", "$moduleFolder"))) {
-                    # todo: workaround for https://github.com/PowerShell/PowerShell/issues/9246 (https://github.com/PowerShell/PowerShell/issues/11721)
-                    # todo: this does not address the problem if the path is a subfolder of a junction
-                    Get-ChildItem -Path $moduleFolder -Recurse -Force | Remove-Item -Force
-                    Remove-Item -Path $moduleFolder -Force
+                $moduleFolder = $null
+                $moduleFolder = Split-Path $version.Path -Parent
+                if ($Force -or ($PSCmdlet.ShouldProcess("$moduleFolder", "Remove module"))) {
+                    if ($Force -or ($PSCmdlet.ShouldContinue("Remove module?", "$moduleFolder"))) {
+                        # todo: workaround for https://github.com/PowerShell/PowerShell/issues/9246 (https://github.com/PowerShell/PowerShell/issues/11721)
+                        # todo: this does not address the problem if the path is a subfolder of a junction
+                        Get-ChildItem -Path $moduleFolder -File -Recurse -Verbose:$false | ForEach-Object { Remove-Item $_ -Force -ErrorAction 'SilentlyContinue' -Verbose:$false }
+                        # sleep 5
+                        # note: for modules with subfolders I need to ignore the first error and run again the delete command, unless I want to have a recursive function
+                        # Get-ChildItem -Path $moduleFolder -Recurse -Force -Verbose:$false | ForEach-Object { Remove-Item $_ -Force -ErrorAction 'SilentlyContinue' -Verbose:$false }
+                        # Get-ChildItem -Path $moduleFolder -Recurse -Force | Remove-Item -Force
+                        Remove-Item -Path $moduleFolder -Force
+                    }
                 }
             }
         }
