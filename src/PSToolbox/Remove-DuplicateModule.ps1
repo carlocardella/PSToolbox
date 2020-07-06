@@ -115,10 +115,11 @@ function Remove-DuplicateModule {
                         # todo: workaround for https://github.com/PowerShell/PowerShell/issues/9246 (https://github.com/PowerShell/PowerShell/issues/11721)
                         # todo: this does not address the problem if the path is a subfolder of a junction
                         Get-ChildItem -Path $moduleFolder -File -Recurse -Verbose:$false | ForEach-Object { Remove-Item $_ -Force -ErrorAction 'SilentlyContinue' -Verbose:$false }
-                        # sleep 5
                         # note: for modules with subfolders I need to ignore the first error and run again the delete command, unless I want to have a recursive function
-                        # Get-ChildItem -Path $moduleFolder -Recurse -Force -Verbose:$false | ForEach-Object { Remove-Item $_ -Force -ErrorAction 'SilentlyContinue' -Verbose:$false }
-                        # Get-ChildItem -Path $moduleFolder -Recurse -Force | Remove-Item -Force
+                        Get-ChildItem -Path $moduleFolder -Recurse -Force -Verbose:$false | Sort-Object 'FullName' -Descending | ForEach-Object {
+                            Remove-Item -Path $_.FullName -Force -ErrorAction 'SilentlyContinue' -Verbose:$false
+                        }
+                        # finally, I can remove the module version root folder
                         Remove-Item -Path $moduleFolder -Force
                     }
                 }
