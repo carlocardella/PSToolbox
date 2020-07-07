@@ -43,7 +43,10 @@ function Remove-DuplicateModule {
     By default the function uses 'Get-Module -ListAvailable' to retrieve the list of modules available in $env:PSModulePath, but you can specify a list of folders to scan instead of searching all available locations.
 
     .PARAMETER Folder
-    Full path to the folder(s) you want to scan for duplicate modules
+    Full path to the folder(s) you want to scan for old modules to clean-up
+
+    .PARAMETER Name
+    Module name(s) to scan for clean-up.
 
     .PARAMETER Force
     Suppresses the confirmation prompt when removing old module
@@ -80,9 +83,13 @@ function Remove-DuplicateModule {
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     param (
-        [parameter(Position = 0)]
+        [parameter(Position = 0, ParameterSetName = 'folder')]
         [ValidateScript( { Test-Path $_ })]
         [string[]]$Folder,
+
+        [parameter(Position = 0, ParameterSetName = 'modulename')]
+        [Alias('ModuleName')]
+        [string[]]$Name = "*",
 
         [parameter()]
         [switch]$Force
@@ -94,7 +101,7 @@ function Remove-DuplicateModule {
         } | Group-Object 'Name' | Where-Object 'Count' -GT 1
     }
     else {
-        $groups = Get-Module -ListAvailable -Verbose:$false | Where-Object Path -Like "$env:USERPROFILE*" | Group-Object 'Name' | Where-Object 'Count' -GT 1
+        $groups = Get-Module -ListAvailable -Name $Name -Verbose:$false | Where-Object Path -Like "$env:USERPROFILE*" | Group-Object 'Name' | Where-Object 'Count' -GT 1
     }
 
     foreach ($group in $groups) {
