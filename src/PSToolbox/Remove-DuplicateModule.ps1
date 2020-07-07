@@ -114,6 +114,7 @@ function Remove-DuplicateModule {
                     if ($Force -or ($PSCmdlet.ShouldContinue("Remove module?", "$moduleFolder"))) {
                         # todo: workaround for https://github.com/PowerShell/PowerShell/issues/9246 (https://github.com/PowerShell/PowerShell/issues/11721)
                         # todo: this does not address the problem if the path is a subfolder of a junction
+                        # bug: the function seems to erroneously remove preview modules, they have "-beta" appended to the version number; that likely breaks the [ModuleVersion] object
                         Get-ChildItem -Path $moduleFolder -File -Recurse -Verbose:$false | ForEach-Object { Remove-Item $_ -Force -ErrorAction 'SilentlyContinue' -Verbose:$false }
                         # note: for modules with subfolders I need to ignore the first error and run again the delete command, unless I want to have a recursive function
                         Get-ChildItem -Path $moduleFolder -Recurse -Force -Verbose:$false | Sort-Object 'FullName' -Descending | ForEach-Object {
