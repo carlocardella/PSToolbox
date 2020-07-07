@@ -199,4 +199,15 @@ Describe 'PSToolbox' {
         Get-NumberFromString 'tesDt1.%^23' | Should -BeExactly 123
         Get-NumberFromString '123' | Should -BeExactly 123
     }
+
+    Context -Name 'Remove-DuplicateModule' -Tag 'RemoveDuplicateModule' {
+        BeforeAll {
+            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid (New-Guid).Guid -ModuleVersion [ModuleVersion]::new
+
+            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.5.0 -Force
+
+            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\2.0.0 -Force
+        }
+    }
 }
