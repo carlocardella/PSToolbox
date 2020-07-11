@@ -72,10 +72,11 @@ function Update-GitRepository {
         }
 
         if (!$Origin -and !$Upstream) { $Origin = $true }
+        
+        Push-Location
     }
 
     process {
-        Push-Location
 
         foreach ($f in $Folder) {
             Get-ChildItem -Path $f -Directory -Recurse:$Recursive | ForEach-Object {
@@ -97,7 +98,9 @@ function Update-GitRepository {
                 }
             }
         }
-
+    }
+    
+    end {
         Pop-Location
     }
 }
