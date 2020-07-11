@@ -235,4 +235,26 @@ Describe 'PSToolbox' {
         Get-NumberFromString 'tesDt1.%^23' | Should -BeExactly 123
         Get-NumberFromString '123' | Should -BeExactly 123
     }
+
+    Context -Name 'Update-GitRepository' -Tag 'UpdateGitRepository' {
+        BeforeAll {
+            Push-Location
+
+            # create test repo 1
+            New-Item -ItemType 'Directory' -Path "$TestDrive\repo1"
+            Set-Location "$TestDrive\repo1"
+            git init
+
+            # create test repo 2
+            New-Item -ItemType 'Directory' -Path "$TestDrive\repo2"
+            Set-Location "$TestDrive\repo2"
+            git init
+
+            Pop-Location
+        }
+
+        It 'Can pull from git remote' {
+            { Update-GitRepository -Folder $TempDrive } | Should -Not -Throw
+        }
+    }
 }
