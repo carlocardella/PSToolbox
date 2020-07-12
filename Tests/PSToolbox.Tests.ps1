@@ -123,14 +123,14 @@ Describe 'PSToolbox' {
     Context -Name 'Test-IsAdmin' -Tag 'TestIsAdmin' {
         It 'Can validate if the process is running elevated' {
             { Test-IsAdmin } | Should -Not -Throw
-            Test-IsAdmin | Should -BeFalse
-        } 
+            Test-IsAdmin | Should -BeTrue
+        }
     }
 
     Context -Name 'Get-RandomString' -Tag 'GetRandomString' {
         It 'Can return a random string with the given parameters' {
             { Get-RandomString } | Should -Not -Throw
-            
+
             (Get-RandomString).Length | Should -Be 15
             (Get-RandomString -Length 22 ).Length | Should -Be 22
 
@@ -165,7 +165,8 @@ Describe 'PSToolbox' {
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\2.0.0 -Force
         }
     }
-
+    
+    
     Context -Name 'Update-GitRepository' -Tag 'UpdateGitRepository' {
         BeforeAll {
             Push-Location
@@ -185,6 +186,13 @@ Describe 'PSToolbox' {
 
         It 'Can pull from git remote' {
             { Update-GitRepository -Folder $TempDrive } | Should -Not -Throw
+        }
+    }
+    
+    Context -Name 'grep' -Tag 'grep' {
+        It 'Uses the "grep" alias property' {
+            { 'asdfg' | grep 'a' } | Should -Not -Throw
+            (Get-Command -Module 'PSToolbox' -CommandType 'Alias').ResolvedCommand | Should -BeExactly 'Select-String'
         }
     }
 }
