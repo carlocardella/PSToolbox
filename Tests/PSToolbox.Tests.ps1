@@ -127,8 +127,8 @@ Describe 'PSToolbox' {
         } 
         
         It 'Can validate if the process is running elevated' {
-
-        }
+            Start-Process "pwsh" -ArgumentList "-Command Import-Module `"$PSScriptRoot/../../src/PSToolbox/`"; Test-IdAmin" -Verb 'RunAs' | Should -BeTrue
+        } -Skip
     }
 
     Context -Name 'Get-RandomString' -Tag 'GetRandomString' {
@@ -184,7 +184,7 @@ Describe 'PSToolbox' {
             Pop-Location
         }
 
-        It 'Can pull from git remote' {
+        It 'Can fetch and pull from git remote' {
             { Update-GitRepository -Folder $TestDrive } | Should -Not -Throw
         }
     }
