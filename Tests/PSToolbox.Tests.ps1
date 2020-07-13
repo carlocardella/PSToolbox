@@ -241,20 +241,16 @@ Describe 'PSToolbox' {
             Push-Location
 
             # create test repo 1
-            New-Item -ItemType 'Directory' -Path "$TestDrive\repo1"
-            Set-Location "$TestDrive\repo1"
-            git init
-
+            git clone https://github.com/carlocardella/PSToolbox.git
+            
             # create test repo 2
-            New-Item -ItemType 'Directory' -Path "$TestDrive\repo2"
-            Set-Location "$TestDrive\repo2"
-            git init
+            git clone https://github.com/carlocardella/AzToolbox.git
 
             Pop-Location
         }
 
         It 'Can pull from git remote' {
-            { Update-GitRepository -Folder $TempDrive } | Should -Not -Throw
+            { Update-GitRepository -Folder $TestDrive } | Should -Not -Throw
         }
     }
 }
