@@ -121,9 +121,13 @@ Describe 'PSToolbox' {
     }
 
     Context -Name 'Test-IsAdmin' -Tag 'TestIsAdmin' {
-        It 'Can validate if the process is running elevated' {
+        It 'Does not throw and returns a boolean' {
             { Test-IsAdmin } | Should -Not -Throw
-            Test-IsAdmin | Should -BeTrue
+            Test-IsAdmin | Should -BeOfType [bool]
+        } 
+        
+        It 'Can validate if the process is running elevated' {
+
         }
     }
 
@@ -170,7 +174,7 @@ Describe 'PSToolbox' {
         BeforeAll {
             Push-Location
             Set-Location $TestDrive
-
+            
             # create test repo 1
             (git clone https://github.com/carlocardella/PSToolbox.git)
             
