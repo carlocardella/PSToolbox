@@ -250,7 +250,7 @@ Describe 'PSToolbox' {
             Pop-Location
         }
 
-        It 'Can pull from git remote' {
+        It 'Can fetch and pull from git remote' {
             { Update-GitRepository -Folder $TestDrive } | Should -Not -Throw
         }
     }
