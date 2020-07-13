@@ -169,12 +169,13 @@ Describe 'PSToolbox' {
     Context -Name 'Update-GitRepository' -Tag 'UpdateGitRepository' {
         BeforeAll {
             Push-Location
+            Set-Location $TestDrive
 
             # create test repo 1
-            git clone https://github.com/carlocardella/PSToolbox.git
+            (git clone https://github.com/carlocardella/PSToolbox.git)
             
             # create test repo 2
-            git clone https://github.com/carlocardella/AzToolbox.git
+            (git clone https://github.com/carlocardella/AzToolbox.git)
 
             Pop-Location
         }
