@@ -166,6 +166,9 @@ Describe 'PSToolbox' {
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.0.0"
 
+            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.0.0"
+            
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.5.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.5.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.5.0"
 
@@ -240,10 +243,10 @@ Describe 'PSToolbox' {
         BeforeAll {
             Push-Location
             Set-Location $TestDrive
-            
+
             # create test repo 1
             (git clone https://github.com/carlocardella/PSToolbox.git)
-            
+
             # create test repo 2
             (git clone https://github.com/carlocardella/AzToolbox.git)
 
