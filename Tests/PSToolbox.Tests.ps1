@@ -124,8 +124,8 @@ Describe 'PSToolbox' {
         It 'Does not throw and returns a boolean' {
             { Test-IsAdmin } | Should -Not -Throw
             Test-IsAdmin | Should -BeOfType [bool]
-        } 
-        
+        }
+
         It 'Can validate if the process is running elevated' {
             Start-Process "pwsh" -ArgumentList "-Command Import-Module `"$PSScriptRoot/../../src/PSToolbox/`"; Test-IdAmin" -Verb 'RunAs' | Should -BeTrue
         } -Skip
@@ -161,12 +161,23 @@ Describe 'PSToolbox' {
 
     Context -Name 'Remove-DuplicateModule' -Tag 'RemoveDuplicateModule' {
         BeforeAll {
+            $guid = (New-Guid).Guid
+
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
-            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid (New-Guid).Guid -ModuleVersion [ModuleVersion]::new
-
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.0.0"
+            
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.5.0 -Force
-
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.5.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.5.0"
+            
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\2.0.0 -Force
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\2.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "2.0.0"
+        }
+
+        It 'Removes old modules' {
+            @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 3
+            { Remove-DuplicateModule -Folder TestDrive:\Modules\TestModule -Force } | Should -Not -Throw
+            @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 1
+            (Get-Module -ListAvailable -Name 'TestModule').Version | Should -Be '2.0.0'
         }
     }
 
@@ -174,10 +185,10 @@ Describe 'PSToolbox' {
         BeforeAll {
             Push-Location
             Set-Location $TestDrive
-            
+
             # create test repo 1
             (git clone https://github.com/carlocardella/PSToolbox.git)
-            
+
             # create test repo 2
             (git clone https://github.com/carlocardella/AzToolbox.git)
 
