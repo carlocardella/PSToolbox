@@ -121,10 +121,14 @@ Describe 'PSToolbox' {
     }
 
     Context -Name 'Test-IsAdmin' -Tag 'TestIsAdmin' {
-        It 'Can validate if the process is running elevated' {
+        It 'Does not throw and returns a boolean' {
             { Test-IsAdmin } | Should -Not -Throw
-            Test-IsAdmin | Should -BeTrue
+            Test-IsAdmin | Should -BeOfType [bool]
         }
+
+        It 'Can validate if the process is running elevated' {
+            Start-Process "pwsh" -ArgumentList "-Command Import-Module `"$PSScriptRoot/../../src/PSToolbox/`"; Test-IdAmin" -Verb 'RunAs' | Should -BeTrue
+        } -Skip
     }
 
     Context -Name 'Get-RandomString' -Tag 'GetRandomString' {
@@ -153,6 +157,63 @@ Describe 'PSToolbox' {
         Get-NumberFromString 'test' | Should -BeNullOrEmpty
         Get-NumberFromString 'tesDt1.%^23' | Should -BeExactly 123
         Get-NumberFromString '123' | Should -BeExactly 123
+    }
+
+    Context -Name 'Remove-OutdatedModule' -Tag 'RemoveOutdatedModule' {
+        BeforeAll {
+            $guid = (New-Guid).Guid
+
+            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.0.0"
+
+            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.5.0 -Force
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.5.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.5.0"
+
+            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\2.0.0 -Force
+            New-ModuleManifest -Path TestDrive:\Modules\TestModule\2.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "2.0.0"
+
+            $separator = $null
+            if ($IsWindows) {
+                $separator = ';'
+            }
+            if ($IsLinux -or $IsMacOS) {
+                $separator = ':'
+            }
+
+            $env:PSModulePath += $separator + "$TestDrive\Modules"
+        }
+
+        It 'Updates PSModulePath' {
+            if ($IsWindows) {
+                $env:PSModulePath -split $separator | Should -Contain $(Resolve-Path -Path $TestDrive\Modules)
+            }
+        }
+
+        It 'Removes old modules' {
+            @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 3
+            { Remove-OutdatedModule -Folder TestDrive:\Modules\TestModule -Force } | Should -Not -Throw
+            @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 1
+            (Get-Module -ListAvailable -Name 'TestModule').Version | Should -Be '2.0.0'
+        }
+    }
+
+    Context -Name 'Update-GitRepository' -Tag 'UpdateGitRepository' {
+        BeforeAll {
+            Push-Location
+            Set-Location $TestDrive
+
+            # create test repo 1
+            (git clone https://github.com/carlocardella/PSToolbox.git)
+
+            # create test repo 2
+            (git clone https://github.com/carlocardella/AzToolbox.git)
+
+            Pop-Location
+        }
+
+        It 'Can fetch and pull from git remote' {
+            { Update-GitRepository -Folder $TestDrive } | Should -Not -Throw
+        }
     }
 
     Context -Name 'grep' -Tag 'grep' {
