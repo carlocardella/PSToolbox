@@ -159,23 +159,39 @@ Describe 'PSToolbox' {
         Get-NumberFromString '123' | Should -BeExactly 123
     }
 
-    Context -Name 'Remove-DuplicateModule' -Tag 'RemoveDuplicateModule' {
+    Context -Name 'Remove-OutdatedModule' -Tag 'RemoveOutdatedModule' {
         BeforeAll {
             $guid = (New-Guid).Guid
 
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.0.0"
-            
+
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.5.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.5.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.5.0"
-            
+
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\2.0.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\2.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "2.0.0"
+
+            $separator = $null
+            if ($IsWindows) {
+                $separator = ';'
+            }
+            if ($IsLinux -or $IsMacOS) {
+                $separator = ':'
+            }
+
+            $env:PSModulePath += $separator + "$TestDrive\Modules"
+        }
+
+        It 'Updates PSModulePath' {
+            if ($IsWindows) {
+                $env:PSModulePath -split $separator | Should -Contain $(Resolve-Path -Path $TestDrive\Modules)
+            }
         }
 
         It 'Removes old modules' {
             @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 3
-            { Remove-DuplicateModule -Folder TestDrive:\Modules\TestModule -Force } | Should -Not -Throw
+            { Remove-OutdatedModule -Folder TestDrive:\Modules\TestModule -Force } | Should -Not -Throw
             @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 1
             (Get-Module -ListAvailable -Name 'TestModule').Version | Should -Be '2.0.0'
         }
