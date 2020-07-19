@@ -1,4 +1,4 @@
-function Deploy-LSEModule {
+function Deploy-Module {
     <#
     .SYNOPSIS
     This function deployis the specificed module under the AllUsers or CurrentUser module folder.
@@ -14,7 +14,7 @@ function Deploy-LSEModule {
     Suppress the confirmation prompt to copy the module
 
     .EXAMPLE
-    Deploy-LSEModule -ModulePath .\Git\LSEBuildModule\LSEBuildModule -Force
+    Deploy-Module -ModulePath .\Git\LSEBuildModule\LSEBuildModule -Force
 
     ModuleType Version    Name                                ExportedCommands
     ---------- -------    ----                                ----------------

@@ -1,4 +1,4 @@
-function Update-LSEModuleFunctionsToExport {
+function Update-ModuleFunctionsToExport {
     <#
     .SYNOPSIS
     Updates FunctionsToExport in a module manifest by listing the ps1 files in the module, or using a list of functions passed as parameter
@@ -13,7 +13,7 @@ function Update-LSEModuleFunctionsToExport {
     Suppresses the confirmation prompt
     
     .EXAMPLE
-    Update-LSEModuleFunctionsToExport -DataFilePath \MyModule\MyModule.psd1 -Force
+    Update-ModuleFunctionsToExport -DataFilePath \MyModule\MyModule.psd1 -Force
     #>
     [CmdletBinding(SupportsShouldProcess)]
     param (

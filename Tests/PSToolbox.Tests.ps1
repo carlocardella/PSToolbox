@@ -222,4 +222,126 @@ Describe 'PSToolbox' {
             (Get-Command -Module 'PSToolbox' -CommandType 'Alias').ResolvedCommand | Should -BeExactly 'Select-String'
         }
     }
+
+    Context -Name 'Update-ModuleVersion' -Tag 'UpdateModuleVersion', 'BuildModule' {
+        BeforeAll {
+            $psDataFile = "TestDrive:\testDataFile.psd1"
+            New-ModuleManifest -Path $psDataFile -Author 'Carlo Cardella' -Guid (New-Guid) `
+                -ModuleVersion '0.0.1' -CompanyName 'myCompany' -PowerShellVersion '5.1' -CompatiblePSEditions 'Core', 'Desktop'
+        }
+
+        Context 'Ensure test environment is ready' {
+            It 'Is valid psDataFile' {
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '0.0.1'
+            }
+        }
+
+        Context 'Test function' {
+            It 'Can increase Major version' {
+                Update-ModuleVersion -ModuleDataFilePath $psDataFile -Major -Force
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '1.0.0'
+            }
+
+            It 'Can increase Minor version' {
+                Update-ModuleVersion -ModuleDataFilePath $psDataFile -Minor -Force
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '1.1.0'
+            }
+
+            It 'Can increase Patch version' {
+                Update-ModuleVersion -ModuleDataFilePath $psDataFile -Patch -Force
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '1.1.1'
+            }
+
+            It 'Can use alias properties' {
+                Update-ModuleVersion -ModuleDataFilePath $psDataFile -Major -Force
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '2.0.0'
+                Update-ModuleVersion -ModuleDataFilePath $psDataFile -Minor -Force
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '2.1.0'
+                Update-ModuleVersion -ModuleDataFilePath $psDataFile -Patch -Force
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '2.1.1'
+            }
+
+            It 'Sets predefined module version' {
+                Update-ModuleVersion -ModuleDataFilePath $psDataFile -ModuleVersion '2.0.0' -Force
+                (Test-ModuleManifest -Path $psDataFile).Version | Should -Be '2.0.0'
+            }
+
+            It 'Should fail if passing an invalid ModuleVersion with 4 tokens' {
+                { Update-ModuleVersion -ModuleDataFilePath $psDataFile -ModuleVersion '1.0.0.0' -Force } | Should -Throw
+            }
+
+            It 'Should fail if passing an invalid ModuleVersion with 2 tokens' {
+                { Update-ModuleVersion -ModuleDataFilePath $psDataFile -ModuleVersion '1.0' -Force } | Should -Throw
+            }
+
+            It 'Updates FunctionsToExport' {
+                Copy-Item -Path "$PSScriptRoot/../src/PSToolbox/" -Recurse -Destination "TestDrive:\" -Force
+                Update-ModuleVersion -ModuleDataFilePath "TestDrive:\PSToolbox\PSToolbox.psd1" -Major -Force
+                $ps1Files = Get-ChildItem "TestDrive:\PSToolbox" -Filter "*.ps1" | Select-Object -ExpandProperty 'Name' | Split-Path -LeafBase
+                $functionsToExport = Import-PowerShellDataFile -Path "TestDrive:\PSToolbox\PSToolbox.psd1" -ErrorAction Stop
+                
+                $ps1Files | Should -BeExactly $functionsToExport.FunctionsToExport
+
+                $ps1Files.Count | Should -Be $functionsToExport.FunctionsToExport.Count
+            }
+        }
+    }
+
+    Context -Name 'Update-Module' -Tag 'DeployModule', 'BuildModule' {
+        $destModulePath = "$TestDrive\Powershell\Modules"
+        New-Item -ItemType 'Directory' -Path $destModulePath -Force
+        $profile.CurrentUserAllHosts = $destModulePath
+
+        It 'Can deploy a brand new module' {
+            Deploy-LSEModule -ModulePath "$PSScriptRoot/../src/PSToolbox" -Scope 'CurrentUser' -Force | Should -BeOfType [System.Management.Automation.PSModuleInfo]
+        }
+            
+        It 'Can overwrite an existing module with the same version' {
+            Deploy-LSEModule -ModulePath "$PSScriptRoot/../src/PSToolbox" -Scope 'CurrentUser' -Force | Should -BeOfType [System.Management.Automation.PSModuleInfo]
+        }
+
+        It 'Should fail parameter validation when ModulePath is not a folder' {
+            { Deploy-LSEModule -ModulePath "$PSScriptRoot/../src/PSToolbox/PSToolbox.psd1" -Scope 'CurrentUser' -Force } | Should -Throw
+        }
+    }
+
+    Context -Name 'New-Module' -Tag 'NewModule', 'BuildModule' {
+        It 'Can create a new module' {
+            { New-LSEModule -ModuleName 'TestModule' -Path $TestDrive -Author 'Me' -CompanyName 'Acme' -CompatiblePSEditions 'Core', 'Desktop' -Description 'some description' -ProjectUri 'https://project/' -LicenseUri 'https://license/' } | Should -Not -Throw
+        }
+
+        It 'Creates a valid Powershell Data File' {
+            { Test-ModuleManifest -Path "$TestDrive\TestModule\TestModule.psd1" } | Should -Not -Throw
+        }
+
+        It 'Validates module Author property' {
+            (Import-PowerShellDataFile -Path "$TestDrive\TestModule\TestModule.psd1").Author | Should -BeExactly 'Me'
+        }
+
+        It 'Validates module CompanyName property' {
+            (Import-PowerShellDataFile -Path "$TestDrive\TestModule\TestModule.psd1").CompanyName | Should -BeExactly 'Acme'
+        }
+
+        It 'Validates module CompatiblePSEditions property' {
+            (Import-PowerShellDataFile -Path "$TestDrive\TestModule\TestModule.psd1").CompatiblePSEditions | Should -Contain 'Core'
+            (Import-PowerShellDataFile -Path "$TestDrive\TestModule\TestModule.psd1").CompatiblePSEditions | Should -Contain 'Desktop'
+        }
+
+        It 'Validates module Description property' {
+            (Import-PowerShellDataFile -Path "$TestDrive\TestModule\TestModule.psd1").Description | Should -BeExactly 'some description'
+        }
+
+        It 'Validates module ProjectUri property' {
+            (Import-PowerShellDataFile -Path "$TestDrive\TestModule\TestModule.psd1").PrivateData.PSData.ProjectUri | Should -BeExactly 'https://project/'
+        }
+
+        It 'Validates module LicenseUri property' {
+            (Import-PowerShellDataFile -Path "$TestDrive\TestModule\TestModule.psd1").PrivateData.PSData.LicenseUri | Should -BeExactly 'https://license/'
+        }
+
+        It 'Exports the expected functions' {
+            $functions = Get-Command -Module 'PSToolbox'
+            $functions.Count | Should -BeGreaterThan 0
+        }
+    }
 }
