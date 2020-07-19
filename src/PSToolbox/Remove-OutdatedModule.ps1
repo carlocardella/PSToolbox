@@ -107,8 +107,6 @@ function Remove-OutdatedModule {
     foreach ($group in $groups) {
         $versions = $null
         $versions = $group.Group | Sort-Object 'Version' | Select-Object -SkipLast 1
-        $versionToKeep = $null
-        $versionToKeep = $group.Group | Sort-Object 'Version' | Select-Object -Last 1
 
         foreach ($version in $versions) {
             # this is needed because a module in a subfolder could have been already deleted after its parent
