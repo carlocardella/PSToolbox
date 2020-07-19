@@ -31,6 +31,10 @@ function Test-PSVersionCompatibility {
     )
 
     begin {
+        if (!(Get-Module -Name 'PSScriptAnalyzer')) {
+            throw "PSScriptAnalyzer not found, please make sure the module is available in PSModulePath. You can install it from the Powershell Gallery"
+        }
+        
         $settings = @{
             Rules = @{
                 PSUseCompatibleSyntax = @{
