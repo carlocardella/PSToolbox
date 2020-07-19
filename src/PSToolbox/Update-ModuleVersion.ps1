@@ -1,4 +1,4 @@
-function Update-LSEModuleVersion {
+function Update-ModuleVersion {
     <#
     .SYNOPSIS
     This function updates the ModuleVersion property in the PSD1 file passed as input prameter
@@ -22,7 +22,7 @@ function Update-LSEModuleVersion {
     Suppress update confirmation
 
     .EXAMPLE
-    Update-LSEModuleVersion -ModuleDataFilePath ./LSEBuildModule.psd1 -Patch -Verbose -Force
+    Update-ModuleVersion -ModuleDataFilePath ./LSEBuildModule.psd1 -Patch -Verbose -Force
     #>
     [CmdletBinding(DefaultParameterSetName = 'Patch', SupportsShouldProcess)]
     param (

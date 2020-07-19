@@ -1,4 +1,4 @@
-function Build-LSEModule {
+function Build-Module {
     <#
     .SYNOPSIS
     Runs ScriptAnalyzer and Pester tests on the given module
