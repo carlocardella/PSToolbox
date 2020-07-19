@@ -1,4 +1,4 @@
-function New-LSEModule {
+function New-Module {
     [CmdletBinding()]
     param (
         [parameter(Mandatory, Position = 1)]
