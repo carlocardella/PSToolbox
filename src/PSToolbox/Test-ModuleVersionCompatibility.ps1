@@ -21,7 +21,7 @@ function Test-PSVersionCompatibility {
     
     [CmdletBinding()]
     param (
-        [parameter(ValueFromPipelineByPropertyName)]
+        [parameter(ValueFromPipelineByPropertyName, Position = 0)]
         [Alias('Fullname')]
         [string[]]$Path,
 
