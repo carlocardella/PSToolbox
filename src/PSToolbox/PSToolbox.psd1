@@ -131,7 +131,5 @@ PrivateData = @{
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
 
-    # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
-    # DefaultCommandPrefix = ''
 }
 
