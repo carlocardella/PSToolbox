@@ -15,7 +15,7 @@ Describe 'CheckHelp' {
         }
 
         It "Checks if <functionName> has proper help" -TestCases $functionNames -Test {
-            $help = Get-Help -Name $functionName -Full
+            $help = Get-Help -Name PSToolbox\$functionName -Full
             $ast = [System.Management.Automation.Language.Parser]::ParseInput((Get-Content function:\$functionName), [ref]$null, [ref]$null)
             $astParameters = $ast.ParamBlock.Parameters.Name.variablepath.userpath
 
