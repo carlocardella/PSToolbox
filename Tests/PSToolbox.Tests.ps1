@@ -159,84 +159,26 @@ Describe 'PSToolbox' {
         Get-NumberFromString '123' | Should -BeExactly 123
     }
 
-    Context -Name 'Remove-OutdatedModule' -Tag 'RemoveOutdatedModule' {
+    Context -Name 'Remove-DuplicateModule' -Tag 'RemoveDuplicateModule' {
         BeforeAll {
             $guid = (New-Guid).Guid
-
-            New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
-            New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.0.0"
 
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.0.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.0.0"
             
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\1.5.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\1.5.0\TestModule.psd1 -Guid $guid -ModuleVersion "1.5.0"
-
+            
             New-Item -Type 'Directory' -Path TestDrive:\Modules\TestModule\2.0.0 -Force
             New-ModuleManifest -Path TestDrive:\Modules\TestModule\2.0.0\TestModule.psd1 -Guid $guid -ModuleVersion "2.0.0"
-
-            $separator = $null
-            if ($IsWindows) {
-                $separator = ';'
-            }
-            if ($IsLinux -or $IsMacOS) {
-                $separator = ':'
-            }
-
-            $env:PSModulePath += $separator + "$TestDrive\Modules"
-        }
-
-        It 'Updates PSModulePath' {
-            if ($IsWindows) {
-                $env:PSModulePath -split $separator | Should -Contain $(Resolve-Path -Path $TestDrive\Modules)
-            }
         }
 
         It 'Removes old modules' {
             @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 3
-            { Remove-OutdatedModule -Folder TestDrive:\Modules\TestModule -Force } | Should -Not -Throw
+            { Remove-DuplicateModule -Folder TestDrive:\Modules\TestModule -Force } | Should -Not -Throw
             @(Get-ChildItem TestDrive:\Modules\TestModule -Directory).Count | Should -Be 1
             (Get-Module -ListAvailable -Name 'TestModule').Version | Should -Be '2.0.0'
         }
-    }
-
-    Context -Name 'Update-GitRepository' -Tag 'UpdateGitRepository' {
-        BeforeAll {
-            Push-Location
-            Set-Location $TestDrive
-
-            # create test repo 1
-            (git clone https://github.com/carlocardella/PSToolbox.git)
-
-            # create test repo 2
-            (git clone https://github.com/carlocardella/AzToolbox.git)
-
-            Pop-Location
-        }
-
-        It 'Can fetch and pull from git remote' {
-            { Update-GitRepository -Folder $TestDrive } | Should -Not -Throw
-        }
-    }
-
-    Context -Name 'grep' -Tag 'grep' {
-        It 'Uses the "grep" alias property' {
-            { 'asdfg' | grep 'a' } | Should -Not -Throw
-            (Get-Command -Module 'PSToolbox' -CommandType 'Alias').ResolvedCommand | Should -BeExactly 'Select-String'
-        }
-    }
-
-    Context -Name 'Get-NumberFromString' -Tag 'GetNumberFromString' {
-        { Get-NumberFromString -String 'sd679jsds8' } | Should -Not -Throw
-        { Get-NumberFromString -String 'hssdfsfs' } | Should -Not -Throw
-        { Get-NumberFromString -String '23423423423' } | Should -Not -Throw
-        { Get-NumberFromString -String '!#%gr.' } | Should -Not -Throw
-        { Get-NumberFromString -String '' } | Should -Throw "Cannot bind argument to parameter 'String' because it is an empty string."
-
-        Get-NumberFromString 'test123' | Should -BeExactly 123
-        Get-NumberFromString 'test' | Should -BeNullOrEmpty
-        Get-NumberFromString 'tesDt1.%^23' | Should -BeExactly 123
-        Get-NumberFromString '123' | Should -BeExactly 123
     }
 
     Context -Name 'Update-GitRepository' -Tag 'UpdateGitRepository' {
