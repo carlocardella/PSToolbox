@@ -10,11 +10,11 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 - Deploy powershell module
 - Create new script module
 - Test module version compatibility (PSScriptAnalyzer)
-- Update functions to exmport in a script module
+- Update functions to export in a script module
 - Update module version (major, minor, patch)
 - Set-OneDriveFileProperty
 - Get-JunctionTarget
-- Get-LoggedOnUwer (whoami)
+- Get-LoggedOnUser (whoami)
 - Lock-Computer
 - Convert-TimeZone
 - ConvertFrom-Base64

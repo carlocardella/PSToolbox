@@ -39,4 +39,9 @@ Describe 'CheckHelp' {
             $functionName -in $testFiles | Should -BeTrue
         }
     }
+}               $parameter.description.text | Should -Not -Be 'An example' -ErrorAction Continue -Because "$($parameter.name) should have proper help"
+                $parameter.description.text | Should -Not -Be 'General notes' -ErrorAction Continue -Because "$($parameter.name) should have proper help"
+            }
+        }
+    }
 }
