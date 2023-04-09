@@ -1,10 +1,13 @@
 ﻿function ConvertFrom-PsCustomObjectToHashtable {
     <#
     .SYNOPSIS
-        Converts the passed object to an hashtable
+    Converts the passed object to an hashtable
 
+    .PARAMETER PsObject
+    The PsObject to convert to hashtable
+    
     .EXAMPLE
-        ConvertFrom-PsCustomObjectToHashtable -PsObject $mypsobject
+    ConvertFrom-PsCustomObjectToHashtable -PsObject $mypsobject
     #>
     [CmdletBinding()]
     [OutputType([hashtable[]])]

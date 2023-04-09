@@ -1,8 +1,11 @@
 ﻿<#
-.SYNOPSIS
+    .SYNOPSIS
     Converts the passed hashtable to an object
 
-.EXAMPLE
+    .PARAMETER Hashtable
+    The hashtable to convert to PSCustomObject
+
+    .EXAMPLE
     ConvertFrom-HashtableToPsCustomObject -Hashtable MyHashtable
 #>
 function ConvertFrom-HashtableToPsCustomObject {

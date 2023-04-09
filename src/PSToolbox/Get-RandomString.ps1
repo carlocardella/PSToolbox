@@ -7,16 +7,19 @@
     Length of the string (number of characters) to return
 
     .PARAMETER Numbers
-    The string must contain numbers
+    The returned string must contain numbers
 
     .PARAMETER LowercaseLetters
-    The string must contains lowercase letters
+    The returned string must contains lowercase letters
 
     .PARAMETER UppercaseLetters
-    The string must contain uppercase letters
+    The returned string must contain uppercase letters
 
     .PARAMETER Symbols
-    The string mut contain symbols and special characters
+    The returned string must contain symbols and special characters
+
+    .PARAMETER Space
+    The returned string must contain spaces
 
     .EXAMPLE
     Get-RandomString -Length 20 -UppercaseLetters -Numbers 1CVCB81ZZC05XYVEUN67
