@@ -3,7 +3,7 @@
     .SYNOPSIS
     Format and indent an XML file or string for better deadability
 
-    .PARAMETER Name
+    .PARAMETER FileName
     XML file to format
 
     .PARAMETER Overwrite
