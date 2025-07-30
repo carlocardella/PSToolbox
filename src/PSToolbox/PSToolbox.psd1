@@ -12,7 +12,7 @@
 RootModule = 'PSToolbox.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.3.0'
+ModuleVersion = '0.4.0'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core', 'Desktop'
@@ -77,7 +77,7 @@ FunctionsToExport = 'Convert-CertBase64DataToFile', 'Convert-CertificateToBase64
                'Remove-OutdatedModule', 'Set-EncryptedCredentialToFile', 
                'Set-SqlQuery', 'Set-WindowTitle', 'Test-Guid', 'Test-IsAdmin', 
                'Test-IsHexadecimal', 'Test-Json', 'Unprotect-SecureString', 
-               'Update-GitRepository', 'Update-StringInFile'
+               'Update-GitRepository', 'Update-StringInFile', 'Test-TLSCertificate'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
